@@ -15,14 +15,14 @@ Inside of your Astro project, you'll see the following folders and files:
 ├── public/
 │   └── favicon.svg
 ├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
+│   ├── assets             /assets holds things like logos
+│   │   └── astro.svg   
+│   ├── components         /components holds the .astro component files
 │   │   └── Welcome.astro
-│   ├── layouts
+│   ├── layouts            /layouts holds the .astro 'wrapper' components
 │   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
+│   └── pages              /pages holds the route pages (about.astro -> sunriseresidential.com/about)
+│       └── index.astro 
 └── package.json
 ```
 
