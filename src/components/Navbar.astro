@@ -1,22 +1,196 @@
+---
+const links = [
+    { href: "/services", label: "Our Services" }
+];
+const phone = "(612) 406-9257";
+const email = "sunriseresidentialllc@gmail.com";
+const logoSrc = "/sun-residential-logo-main.png";
+
+const pathname = Astro.url.pathname;
+---
 
 
-<div id="navbar">
-    <nav class="bg-white shadow-xl text-black">
-        <div class="px-12 mx-auto">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <a href="/" class="flex items-center">
-                        <img src={'/sun-residential-logo-main.png'} alt="Sun Residential" class="h-32 w-auto" />
-                    </a>
-                </div>
-                <div class="flex items-center px-3 border-2 border-black">
-                    <a href="/contact" class="">Contact Us</a>
-                </div>
-                <div class="flex items-center justify-between">
-                    <a href="/about-us" class="px-3">About</a>
-                    Call Us: (123) 456-7890
-                </div>
-            </div>
+<nav
+  id="navbar"
+  class="bg-white shadow-xl text-black sticky top-0 z-50 transition-all duration-300"
+  transition:persist
+>
+
+  <div class="mx-auto py-1 md:py-2 lg:py-4 px-8 md:px-12 lg:px-16">
+
+    <div class="flex items-center justify-between">
+
+      <!-- Logo (View Transition enabled) -->
+      <a href="/" class="flex items-center">
+        <img
+          src={logoSrc}
+          alt="Logo"
+          class="h-16 md:h-18 lg:h-24 w-auto transition-all duration-300"
+          transition:name="site-logo"
+        />
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden sm:flex items-center gap-8">
+        {links.map((link) => (
+          <a
+            href={link.href}
+            class={`transition hover:text-secondary hover:border-primary hover:border-b-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary ${pathname === link.href ? 'text-secondary font-semibold' : ''}`}
+            transition:name={`nav-${link.label}`}
+          >
+            {link.label}
+          </a>
+        ))}
+
+        <a
+          href="/contact"
+          class="px-4 py-2 border-2 border-secondary hover:bg-secondary hover:text-white transition focus-visible:ring-2 focus-visible:ring-secondary"
+          transition:name="cta-contact"
+        >
+          Contact Us
+        </a>
+      </div>
+
+      <!-- Desktop Contact -->
+      <div class="hidden md:block text-sm text-right border-2 border-primary px-4 py-2">
+        <div>Call: {phone}</div>
+        <div>
+          Email:
+          <a
+            href={`mailto:${email}`}
+            class="text-secondary hover:underline focus-visible:ring-2 focus-visible:ring-secondary"
+          >
+            {email}
+          </a>
         </div>
-    </nav>
-</div>
+      </div>
+
+      <!-- Mobile Button -->
+      <button
+        id="menu-btn"
+        class="sm:hidden flex flex-col justify-center items-center gap-1 hover:cursor-pointer"
+        aria-label="Toggle Menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+    </div>
+
+    <!-- Mobile Menu -->
+    <div
+      id="mobile-menu"
+      class="md:hidden overflow-hidden max-h-0 transition-all duration-300 ease-in-out"
+      transition:name="mobile-menu"
+    >
+      <div class="flex flex-col space-y-4 pb-4 pt-2">
+        <div>
+            <a
+              href="/contact"
+              class="inline-block px-4 py-2 border-2 border-secondary hover:bg-secondary hover:text-white transition focus-visible:ring-2 focus-visible:ring-secondary"
+              transition:name="cta-contact"
+            >
+              Contact Us
+            </a>
+        </div>
+
+        {links.map((link) => (
+          <a
+            href={link.href}
+            class={`block transition hover:text-secondary focus-visible:ring-2 focus-visible:ring-secondary ${pathname === link.href ? 'text-secondary font-semibold' : ''}`}
+          >
+            {link.label}
+          </a>
+        ))}
+
+        <div class="pt-3 text-sm border-t border-primary">
+          <div>Call: {phone}</div>
+          <div>
+            Email:
+            <a
+              href={`mailto:${email}`}
+              class="text-secondary hover:underline"
+            >
+              {email}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<style>
+  .bar {
+    width: 24px;
+    height: 2px;
+    background: black;
+    transition: all 0.3s ease;
+  }
+
+  .open .bar:nth-child(1) {
+    transform: rotate(45deg) translateY(8.5px);
+  }
+
+  .open .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .open .bar:nth-child(3) {
+    transform: rotate(-45deg) translateY(-8.5px);
+  }
+</style>
+
+<script is:inline>
+    const btn = document.getElementById("menu-btn");
+    const menu = document.getElementById("mobile-menu");
+    const navbar = document.getElementById("navbar");
+
+    let open = false;
+
+    function openMenu() {
+        menu.style.maxHeight = menu.scrollHeight + "px";
+        btn.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+        open = true;
+    }
+
+    function closeMenu() {
+        menu.style.maxHeight = "0px";
+        btn.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+        open = false;
+    }
+
+    btn?.addEventListener("click", () => {
+        open ? closeMenu() : openMenu();
+    });
+
+    // Close on outside click
+    document.addEventListener("click", (e) => {
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            closeMenu();
+        }
+    });
+
+    // ESC key support
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMenu();
+    });
+
+    // Close on route change (Astro View Transitions)
+    document.addEventListener("astro:page-load", closeMenu);
+
+    // Navbar shadow on scroll
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 80) {
+            navbar.classList.add("shadow-md");
+        } else {
+            navbar.classList.remove("shadow-md");
+        }
+    });
+</script>
